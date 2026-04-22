@@ -29,9 +29,17 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        h1, h2, h3 {
+        h1, h2 {
             text-align: center;
             color: #222;
+        }
+        /* Cambio aplicado: Alineación a la izquierda para los apartados del formulario */
+        h3 {
+            text-align: left; 
+            color: #222;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-top: 30px;
         }
         .legal-box {
             border: 1px solid var(--border);
@@ -50,6 +58,7 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            font-size: 14px;
         }
         input[type="text"], input[type="date"], input[type="tel"] {
             width: 100%;
@@ -75,7 +84,6 @@
             background: #fff;
             position: relative;
         }
-        /* Bloquea el scroll táctil nativo en el área de la firma */
         canvas {
             display: block;
             width: 100%;
@@ -140,15 +148,15 @@
             <label for="menor_fecha">Fecha de nacimiento:</label>
             <input type="date" id="menor_fecha" required>
         </div>
-        <div class="form-group">
-            <label for="menor_dni">DNI/NIE:</label>
-            <input type="text" id="menor_dni" required>
-        </div>
 
         <h3>2. Datos del padre, madre o representante legal</h3>
         <div class="form-group">
             <label for="tutor_nombre">Nombre y apellidos:</label>
             <input type="text" id="tutor_nombre" required>
+        </div>
+        <div class="form-group">
+            <label for="tutor_dni">DNI/NIE:</label>
+            <input type="text" id="tutor_dni" required>
         </div>
         <div class="form-group">
             <label for="tutor_telefono">Teléfono de contacto:</label>
@@ -184,14 +192,12 @@
 </div>
 
 <script>
-    // Inicialización del canvas de firma
     const canvas = document.getElementById('signature-pad');
     const signaturePad = new SignaturePad(canvas, {
         backgroundColor: 'rgba(255, 255, 255, 0)',
         penColor: 'rgb(0, 0, 0)'
     });
 
-    // Ajuste del tamaño del canvas para asegurar resolución correcta
     function resizeCanvas() {
         const ratio =  Math.max(window.devicePixelRatio || 1, 1);
         canvas.width = canvas.offsetWidth * ratio;
@@ -202,19 +208,16 @@
     window.onresize = resizeCanvas;
     resizeCanvas();
 
-    // Limpiar firma
     document.getElementById('clear-signature').addEventListener('click', () => {
         signaturePad.clear();
     });
 
-    // Validar checkbox para habilitar el botón
     const termsCheckbox = document.getElementById('accept-terms');
     const submitBtn = document.getElementById('submit-btn');
     termsCheckbox.addEventListener('change', (e) => {
         submitBtn.disabled = !e.target.checked;
     });
 
-    // Manejo de la generación del PDF
     document.getElementById('pdfForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -224,54 +227,54 @@
         }
 
         try {
-            // 1. Obtener el archivo base
-            const url = 'autorizacion_base.pdf';
-            const existingPdfBytes = await fetch(url).then(res => {
-                if (!res.ok) throw new Error("No se pudo cargar el PDF base");
-                return res.arrayBuffer();
-            });
+            // Se fuerza la lectura con ruta relativa explícita para evitar fallos de enrutamiento en GitHub Pages
+            const url = './autorizacion_base.pdf';
+            const res = await fetch(url);
+            
+            if (!res.ok) {
+                throw new Error(`Error de red: código ${res.status}. Archivo no encontrado en la ruta.`);
+            }
+            
+            const existingPdfBytes = await res.arrayBuffer();
 
-            // 2. Cargar el PDF en pdf-lib
+            // Cargar documento en pdf-lib
             const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
             const pages = pdfDoc.getPages();
-            const firstPage = pages[0]; // Trabajamos sobre la primera página
+            const firstPage = pages[0]; 
 
-            // Fuente y configuración básica
             const helveticaFont = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
             const textSize = 11;
             const checkSize = 14;
 
-            // Extraer datos del formulario
+            // Extraer datos
             const menorNombre = document.getElementById('menor_nombre').value;
             const menorFecha = document.getElementById('menor_fecha').value;
-            const menorDni = document.getElementById('menor_dni').value;
             const tutorNombre = document.getElementById('tutor_nombre').value;
+            const tutorDni = document.getElementById('tutor_dni').value;
             const tutorTelefono = document.getElementById('tutor_telefono').value;
             const authA = document.querySelector('input[name="auth_a"]:checked').value;
             const authB = document.querySelector('input[name="auth_b"]:checked').value;
             const lugar = document.getElementById('firma_lugar').value;
 
-            // Generación de fecha actual
+            // Fecha actual
             const hoy = new Date();
             const dia = String(hoy.getDate()).padStart(2, '0');
             const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
             const mes = meses[hoy.getMonth()];
-            const anio = String(hoy.getFullYear()).slice(-1); // Extrae el último dígito para "202_"
+            const anio = String(hoy.getFullYear()).slice(-1); 
 
-            // --- ATENCIÓN: COORDENADAS ESTIMADAS ---
-            // El origen (0,0) es la esquina inferior izquierda.
-            // Requiere ajuste manual probando la plantilla real.
+            // --- COORDENADAS (Modificadas para la nueva estructura) ---
             
-            // Datos del menor
+            // Menor
             firstPage.drawText(menorNombre, { x: 150, y: 720, size: textSize, font: helveticaFont });
             firstPage.drawText(menorFecha, { x: 150, y: 690, size: textSize, font: helveticaFont });
-            firstPage.drawText(menorDni, { x: 350, y: 690, size: textSize, font: helveticaFont });
 
-            // Datos del tutor
+            // Tutor (Incluyendo su DNI)
             firstPage.drawText(tutorNombre, { x: 150, y: 650, size: textSize, font: helveticaFont });
-            firstPage.drawText(tutorTelefono, { x: 150, y: 620, size: textSize, font: helveticaFont });
+            firstPage.drawText(tutorDni, { x: 150, y: 620, size: textSize, font: helveticaFont });
+            firstPage.drawText(tutorTelefono, { x: 350, y: 620, size: textSize, font: helveticaFont });
 
-            // Autorizaciones (Dibujamos una 'X' en la casilla correspondiente)
+            // Casillas de verificación
             if (authA === 'si') {
                 firstPage.drawText('X', { x: 60, y: 440, size: checkSize, font: helveticaFont });
             } else {
@@ -284,29 +287,26 @@
                 firstPage.drawText('X', { x: 60, y: 360, size: checkSize, font: helveticaFont });
             }
 
-            // Textos de Firma y Fecha
+            // Datos de pie y firma
             firstPage.drawText(lugar, { x: 80, y: 200, size: textSize, font: helveticaFont });
             firstPage.drawText(dia, { x: 200, y: 200, size: textSize, font: helveticaFont });
             firstPage.drawText(mes, { x: 280, y: 200, size: textSize, font: helveticaFont });
             firstPage.drawText(anio, { x: 400, y: 200, size: textSize, font: helveticaFont });
-            
-            // Repetir nombre del tutor debajo de la firma
             firstPage.drawText(tutorNombre, { x: 150, y: 150, size: textSize, font: helveticaFont });
 
-            // 3. Procesar y dibujar la firma
+            // Firma canvas
             const signatureDataUrl = signaturePad.toDataURL('image/png');
-            const signatureImageBytes = await fetch(signatureDataUrl).then(res => res.arrayBuffer());
+            const signatureImageBytes = await fetch(signatureDataUrl).then(r => r.arrayBuffer());
             const pngImage = await pdfDoc.embedPng(signatureImageBytes);
             
-            const pngDims = pngImage.scale(0.3); // Ajustar escala según necesidad
+            const pngDims = pngImage.scale(0.3); 
             firstPage.drawImage(pngImage, {
                 x: 350,
-                y: 120, // Altura estimada para el espacio de la firma
+                y: 120, 
                 width: pngDims.width,
                 height: pngDims.height,
             });
 
-            // 4. Generar y descargar documento final
             const pdfBytes = await pdfDoc.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             const urlDescarga = window.URL.createObjectURL(blob);
@@ -320,8 +320,9 @@
             window.URL.revokeObjectURL(urlDescarga);
 
         } catch (error) {
-            console.error("Error al generar el PDF:", error);
-            alert("Hubo un problema al generar el PDF. Asegúrate de que 'autorizacion_base.pdf' está disponible en el servidor.");
+            console.error("Error completo:", error);
+            // El mensaje ahora revela el error técnico real para saber qué está fallando
+            alert("No se pudo generar el documento. Error detectado: " + error.message);
         }
     });
 </script>
