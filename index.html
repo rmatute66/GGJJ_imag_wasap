@@ -266,33 +266,33 @@
             // --- COORDENADAS (Modificadas para la nueva estructura) ---
             
             // Menor
-            firstPage.drawText(menorNombre, { x: 150, y: 720, size: textSize, font: helveticaFont });
-            firstPage.drawText(menorFecha, { x: 150, y: 690, size: textSize, font: helveticaFont });
+            firstPage.drawText(menorNombre, { x: 145, y: 725, size: textSize, font: helveticaFont });
+            firstPage.drawText(menorFecha, { x: 500, y: 725, size: textSize, font: helveticaFont });
 
             // Tutor (Incluyendo su DNI)
-            firstPage.drawText(tutorNombre, { x: 150, y: 650, size: textSize, font: helveticaFont });
-            firstPage.drawText(tutorDni, { x: 150, y: 620, size: textSize, font: helveticaFont });
-            firstPage.drawText(tutorTelefono, { x: 350, y: 620, size: textSize, font: helveticaFont });
+            firstPage.drawText(tutorNombre, { x: 145, y: 640, size: textSize, font: helveticaFont });
+            firstPage.drawText(tutorDni, { x: 400, y: 640, size: textSize, font: helveticaFont });
+            firstPage.drawText(tutorTelefono, { x: 150, y: 650, size: textSize, font: helveticaFont });
 
             // Casillas de verificación
             if (authA === 'si') {
-                firstPage.drawText('X', { x: 60, y: 440, size: checkSize, font: helveticaFont });
+                firstPage.drawText('X', { x: 58, y: 375, size: checkSize, font: helveticaFont });
             } else {
-                firstPage.drawText('X', { x: 60, y: 420, size: checkSize, font: helveticaFont });
+                firstPage.drawText('X', { x: 58, y: 330, size: checkSize, font: helveticaFont });
             }
 
             if (authB === 'si') {
-                firstPage.drawText('X', { x: 60, y: 380, size: checkSize, font: helveticaFont });
+                firstPage.drawText('X', { x: 58, y: 320, size: checkSize, font: helveticaFont });
             } else {
-                firstPage.drawText('X', { x: 60, y: 360, size: checkSize, font: helveticaFont });
+                firstPage.drawText('X', { x: 58, y: 285, size: checkSize, font: helveticaFont });
             }
 
             // Datos de pie y firma
-            firstPage.drawText(lugar, { x: 80, y: 200, size: textSize, font: helveticaFont });
-            firstPage.drawText(dia, { x: 200, y: 200, size: textSize, font: helveticaFont });
-            firstPage.drawText(mes, { x: 280, y: 200, size: textSize, font: helveticaFont });
-            firstPage.drawText(anio, { x: 400, y: 200, size: textSize, font: helveticaFont });
-            firstPage.drawText(tutorNombre, { x: 150, y: 150, size: textSize, font: helveticaFont });
+            firstPage.drawText(lugar, { x: 75, y: 150, size: textSize, font: helveticaFont });
+            firstPage.drawText(dia, { x: 200, y: 150, size: textSize, font: helveticaFont });
+            firstPage.drawText(mes, { x: 250, y: 150, size: textSize, font: helveticaFont });
+            firstPage.drawText(anio, { x: 350, y: 150, size: textSize, font: helveticaFont });
+            firstPage.drawText(tutorNombre, { x: 150, y: 30, size: textSize, font: helveticaFont });
 
             // Firma canvas
             const signatureDataUrl = signaturePad.toDataURL('image/png');
