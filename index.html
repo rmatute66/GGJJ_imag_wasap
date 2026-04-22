@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autorización - Peña Cultural Flamenca Pastora Pavón</title>
+    
+    <script src="https://unpkg.com/pdf-lib@1.17.5/dist/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #333;
+            --border: #ccc;
+            --bg: #f9f9f9;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: var(--primary);
+            background-color: var(--bg);
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            text-align: center;
+            color: #222;
+        }
+        .legal-box {
+            border: 1px solid var(--border);
+            padding: 15px;
+            background: #fdfdfd;
+            overflow-y: scroll; 
+            height: 200px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="date"], input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .radio-group {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        .checkbox-group {
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .canvas-container {
+            border: 2px dashed var(--border);
+            margin-bottom: 20px;
+            background: #fff;
+            position: relative;
+        }
+        /* Bloquea el scroll táctil nativo en el área de la firma */
+        canvas {
+            display: block;
+            width: 100%;
+            touch-action: none; 
+        }
+        .btn-clear {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #eee;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            border-radius: 3px;
+        }
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-submit:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Formulario de Autorización</h1>
+    <h2>Grupo Joven</h2>
+
+    <div class="legal-box">
+        <p><strong>Información Básica:</strong></p>
+        <p>La Peña Cultural Flamenca Pastora Pavón "Niña de los Peines" de Arahal podrá realizar fotografías y/o vídeos breves durante actividades del Grupo Joven o de la Peña para su difusión en canales oficiales.</p>
+        <p>También podrá crearse un grupo de WhatsApp del Grupo Joven con fines informativos y organizativos administrado por dos personas adultas socias de la Peña que se determinarán en cada momento. La participación en dicho grupo implica que las personas integrantes podrán ver el número de teléfono de los demás participantes.</p>
+        <p>Las imágenes se utilizarán de forma respetuosa. La falta de autorización NO impedirá que el menor forme parte del Grupo Joven.</p>
+        <p><strong>Revocación:</strong> Esta autorización podrá retirarse en cualquier momento mediante comunicación escrita dirigida a la Peña. Contacto para revocación: María Ángeles Ojeda Pérez.</p>
+    </div>
+
+    <div class="checkbox-group">
+        <label>
+            <input type="checkbox" id="accept-terms"> He leído y acepto los términos de la autorización legal.
+        </label>
+    </div>
+
+    <form id="pdfForm">
+        <h3>1. Datos del menor</h3>
+        <div class="form-group">
+            <label for="menor_nombre">Nombre y apellidos:</label>
+            <input type="text" id="menor_nombre" required>
+        </div>
+        <div class="form-group">
+            <label for="menor_fecha">Fecha de nacimiento:</label>
+            <input type="date" id="menor_fecha" required>
+        </div>
+        <div class="form-group">
+            <label for="menor_dni">DNI/NIE:</label>
+            <input type="text" id="menor_dni" required>
+        </div>
+
+        <h3>2. Datos del padre, madre o representante legal</h3>
+        <div class="form-group">
+            <label for="tutor_nombre">Nombre y apellidos:</label>
+            <input type="text" id="tutor_nombre" required>
+        </div>
+        <div class="form-group">
+            <label for="tutor_telefono">Teléfono de contacto:</label>
+            <input type="tel" id="tutor_telefono" required>
+        </div>
+
+        <h3>3. Autorizaciones</h3>
+        <div class="radio-group">
+            <label><strong>A) Uso de imágenes</strong></label><br>
+            <input type="radio" name="auth_a" value="si" required> AUTORIZO la realización y publicación.<br>
+            <input type="radio" name="auth_a" value="no"> NO AUTORIZO.
+        </div>
+        <div class="radio-group">
+            <label><strong>B) Grupo de WhatsApp</strong></label><br>
+            <input type="radio" name="auth_b" value="si" required> AUTORIZO la inclusión en el grupo.<br>
+            <input type="radio" name="auth_b" value="no"> NO AUTORIZO.
+        </div>
+
+        <h3>4. Firma</h3>
+        <div class="form-group">
+            <label for="firma_lugar">Ciudad de firma (En):</label>
+            <input type="text" id="firma_lugar" required placeholder="Ej. Arahal">
+        </div>
+        
+        <label>Firma del padre, madre o representante legal:</label>
+        <div class="canvas-container">
+            <canvas id="signature-pad" height="200"></canvas>
+            <button type="button" class="btn-clear" id="clear-signature">Limpiar</button>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submit-btn" disabled>Generar y Descargar PDF</button>
+    </form>
+</div>
+
+<script>
+    // Inicialización del canvas de firma
+    const canvas = document.getElementById('signature-pad');
+    const signaturePad = new SignaturePad(canvas, {
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        penColor: 'rgb(0, 0, 0)'
+    });
+
+    // Ajuste del tamaño del canvas para asegurar resolución correcta
+    function resizeCanvas() {
+        const ratio =  Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear();
+    }
+    window.onresize = resizeCanvas;
+    resizeCanvas();
+
+    // Limpiar firma
+    document.getElementById('clear-signature').addEventListener('click', () => {
+        signaturePad.clear();
+    });
+
+    // Validar checkbox para habilitar el botón
+    const termsCheckbox = document.getElementById('accept-terms');
+    const submitBtn = document.getElementById('submit-btn');
+    termsCheckbox.addEventListener('change', (e) => {
+        submitBtn.disabled = !e.target.checked;
+    });
+
+    // Manejo de la generación del PDF
+    document.getElementById('pdfForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (signaturePad.isEmpty()) {
+            alert('Por favor, proporcione una firma antes de generar el documento.');
+            return;
+        }
+
+        try {
+            // 1. Obtener el archivo base
+            const url = 'autorizacion_base.pdf';
+            const existingPdfBytes = await fetch(url).then(res => {
+                if (!res.ok) throw new Error("No se pudo cargar el PDF base");
+                return res.arrayBuffer();
+            });
+
+            // 2. Cargar el PDF en pdf-lib
+            const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+            const pages = pdfDoc.getPages();
+            const firstPage = pages[0]; // Trabajamos sobre la primera página
+
+            // Fuente y configuración básica
+            const helveticaFont = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+            const textSize = 11;
+            const checkSize = 14;
+
+            // Extraer datos del formulario
+            const menorNombre = document.getElementById('menor_nombre').value;
+            const menorFecha = document.getElementById('menor_fecha').value;
+            const menorDni = document.getElementById('menor_dni').value;
+            const tutorNombre = document.getElementById('tutor_nombre').value;
+            const tutorTelefono = document.getElementById('tutor_telefono').value;
+            const authA = document.querySelector('input[name="auth_a"]:checked').value;
+            const authB = document.querySelector('input[name="auth_b"]:checked').value;
+            const lugar = document.getElementById('firma_lugar').value;
+
+            // Generación de fecha actual
+            const hoy = new Date();
+            const dia = String(hoy.getDate()).padStart(2, '0');
+            const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+            const mes = meses[hoy.getMonth()];
+            const anio = String(hoy.getFullYear()).slice(-1); // Extrae el último dígito para "202_"
+
+            // --- ATENCIÓN: COORDENADAS ESTIMADAS ---
+            // El origen (0,0) es la esquina inferior izquierda.
+            // Requiere ajuste manual probando la plantilla real.
+            
+            // Datos del menor
+            firstPage.drawText(menorNombre, { x: 150, y: 720, size: textSize, font: helveticaFont });
+            firstPage.drawText(menorFecha, { x: 150, y: 690, size: textSize, font: helveticaFont });
+            firstPage.drawText(menorDni, { x: 350, y: 690, size: textSize, font: helveticaFont });
+
+            // Datos del tutor
+            firstPage.drawText(tutorNombre, { x: 150, y: 650, size: textSize, font: helveticaFont });
+            firstPage.drawText(tutorTelefono, { x: 150, y: 620, size: textSize, font: helveticaFont });
+
+            // Autorizaciones (Dibujamos una 'X' en la casilla correspondiente)
+            if (authA === 'si') {
+                firstPage.drawText('X', { x: 60, y: 440, size: checkSize, font: helveticaFont });
+            } else {
+                firstPage.drawText('X', { x: 60, y: 420, size: checkSize, font: helveticaFont });
+            }
+
+            if (authB === 'si') {
+                firstPage.drawText('X', { x: 60, y: 380, size: checkSize, font: helveticaFont });
+            } else {
+                firstPage.drawText('X', { x: 60, y: 360, size: checkSize, font: helveticaFont });
+            }
+
+            // Textos de Firma y Fecha
+            firstPage.drawText(lugar, { x: 80, y: 200, size: textSize, font: helveticaFont });
+            firstPage.drawText(dia, { x: 200, y: 200, size: textSize, font: helveticaFont });
+            firstPage.drawText(mes, { x: 280, y: 200, size: textSize, font: helveticaFont });
+            firstPage.drawText(anio, { x: 400, y: 200, size: textSize, font: helveticaFont });
+            
+            // Repetir nombre del tutor debajo de la firma
+            firstPage.drawText(tutorNombre, { x: 150, y: 150, size: textSize, font: helveticaFont });
+
+            // 3. Procesar y dibujar la firma
+            const signatureDataUrl = signaturePad.toDataURL('image/png');
+            const signatureImageBytes = await fetch(signatureDataUrl).then(res => res.arrayBuffer());
+            const pngImage = await pdfDoc.embedPng(signatureImageBytes);
+            
+            const pngDims = pngImage.scale(0.3); // Ajustar escala según necesidad
+            firstPage.drawImage(pngImage, {
+                x: 350,
+                y: 120, // Altura estimada para el espacio de la firma
+                width: pngDims.width,
+                height: pngDims.height,
+            });
+
+            // 4. Generar y descargar documento final
+            const pdfBytes = await pdfDoc.save();
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const urlDescarga = window.URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = urlDescarga;
+            a.download = `Autorizacion_${menorNombre.replace(/\s+/g, '_')}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(urlDescarga);
+
+        } catch (error) {
+            console.error("Error al generar el PDF:", error);
+            alert("Hubo un problema al generar el PDF. Asegúrate de que 'autorizacion_base.pdf' está disponible en el servidor.");
+        }
+    });
+</script>
+
+</body>
+</html>
